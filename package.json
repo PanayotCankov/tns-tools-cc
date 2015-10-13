@@ -1,0 +1,27 @@
+{
+  "name": "tns-tools-cc",
+  "version": "1.0.0",
+  "description": "When the apps are too many, and the modules are at loose you need crowd control.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PanayotCankov/tns-tools-cc.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PanayotCankov/tns-tools-cc/issues"
+  },
+  "homepage": "https://github.com/PanayotCankov/tns-tools-cc#readme",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-exec": "^0.4.6"
+  },
+  "scripts": {
+    "install": "grunt install",
+    "xcode": "open TNSApp/platforms/ios/TNSApp.xcodeproj",
+    "ios": "grunt ios",
+    "android": "grunt android"
+  }
+}
