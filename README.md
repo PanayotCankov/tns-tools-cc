@@ -1,7 +1,7 @@
 # NativeScript Crowd Control
 When the apps are too many, and the modules are at loose you need crowd control.
 
-## Getting Started
+## Getting started
 To perform full install and rebuild.
 ```
 npm install
@@ -11,15 +11,19 @@ This will:
  - Delete and create the TNSApp with the available (using the globally available 'tns')
  - Build the NativeScript modules and example apps
  - Deploy the NativeScript modules in the TNSApp
- 
-## To start a watcher that will deploy changes in TNSApp
-```
-npm run watch
-```
 
-Then select and run app:
+Then select and run one of the playground apps in the NativeScript repo:
 ```
 npm run ios -- --app=<app-name>
+```
+Without `app` parameter will run the tests app as default. 
+
+## To start a watcher that will deploy changes in TNSApp
+With this wathcer you will be able to work in the NativeScript repo
+and any changes will be moved timely to the TNSApp. TypeScript will be just transpiled
+(without full rebuild and type checking)
+```
+npm run watch
 ```
 
 **In the `TNSApp` folder** then you should either use `tns run ios` or `tns run android`
