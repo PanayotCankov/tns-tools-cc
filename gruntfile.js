@@ -77,5 +77,10 @@ module.exports = function(grunt) {
 		'deploy-bootstrap',
 		'exec:tns-run-android'
 	]);
+	
+	grunt.registerTask('watch', function() {
+		this.async();
+		require("./build/watch");
+	});
 }
 

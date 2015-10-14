@@ -11,8 +11,29 @@ This will:
  - Delete and create the TNSApp with the available (using the globally available 'tns')
  - Build the NativeScript modules and example apps
  - Deploy the NativeScript modules in the TNSApp
+ 
+## To start a watcher that will deploy changes in TNSApp
+```
+npm run watch
+```
 
-#### To run in iOS simulator
+Then select and run app:
+```
+npm run ios -- --app=<app-name>
+```
+
+**In the `TNSApp` folder** then you should either use `tns run ios` or `tns run android`
+eventually with combination of:
+```
+tns livesync ios --emulator 
+```
+
+#### To open the TNSApp in Xcode:
+```
+npm run xcode
+```
+
+#### To manually run in iOS simulator
 Tests:
 ```
 npm run ios
@@ -27,7 +48,7 @@ or
 grunt ios --app=animations
 ```
 
-#### To run in android
+#### To manually run in android
 Tests:
 ```
 npm run android
@@ -40,9 +61,4 @@ npm run android -- --app=animations
 or
 ```
 grunt android --app=animations
-```
-
-#### To open the TNSApp in Xcode:
-```
-npm run xcode
 ```
