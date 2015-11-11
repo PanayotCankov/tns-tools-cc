@@ -1,6 +1,11 @@
 module.exports = function(grunt) {
 	
 	grunt.initConfig({
+		options: {
+			get tnsModulesPackage() {
+				return grunt.file.expand({ cwd: './NativeScript/bin/dist' }, [ 'tns-core-modules-*.tgz' ])[0];
+			}
+		},
 		clean: {
 			'tnsapp': 'TNSApp/'	
 		},
@@ -30,7 +35,7 @@ module.exports = function(grunt) {
 			'deploy-modules': {
 				cmd: [
 					'npm install',
-					'grunt --platform=Cross --destination=../TNSApp/ --modulespath=../NativeScript/bin/dist/tns-core-modules-1.4.0.tgz --appFiles="../NativeScript/bin/dist/tns-samples-*.tgz,../NativeScript/bin/dist/tns-template-*.tgz,\\!../NativeScript/bin/dist/tns-samples-*-ts-*.tgz,\\!../NativeScript/bin/dist/tns-template-*-ts-*.tgz"'
+					'grunt --platform=Cross --destination=../TNSApp/ --modulespath=../NativeScript/bin/dist/<%= options.tnsModulesPackage %> --appFiles="../NativeScript/bin/dist/tns-samples-*.tgz,../NativeScript/bin/dist/tns-template-*.tgz,\\!../NativeScript/bin/dist/tns-samples-*-ts-*.tgz,\\!../NativeScript/bin/dist/tns-template-*-ts-*.tgz"'
 				].join(' && '),
 				cwd: 'cross-platform-modules-dev'
 			},
