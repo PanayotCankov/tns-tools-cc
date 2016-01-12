@@ -40,7 +40,7 @@ module.exports = function(grunt) {
 				cwd: 'cross-platform-modules-dev'
 			},
 			'tns-run-ios': {
-				cmd: 'tns run ios --emulator --device iPhone-6 --path TNSApp'
+				cmd: 'tns run ios --emulator --device iPhone\\ 6 --path TNSApp'
 			},
 			'tns-run-android': {
 				cmd: 'tns run android --path TNSApp'

@@ -15,7 +15,7 @@ function isApp(f) {
 }
 
 function isResource(f) {
-	var res = /^.*\.(xml|css|png|jpg|jpeg|expected|js)$/mig;
+	var res = /^.*\.(xml|css|png|jpg|jpeg|expected|js|json)$/mig;
 	return res.test(f);
 }
 
