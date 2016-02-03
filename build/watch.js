@@ -9,14 +9,49 @@ function isTs(f) {
 	return ts.test(f) && !dts.test(f);
 }
 
-function isApp(f) {
-	var app = /^apps\/.*$/mig;
-	return app.test(f);
+function appName(f) {
+    var result = /^apps\/([^\/]+).*$/mig.exec(f);
+    var app = result && result[1];
+    app = app && app.toString() || undefined;
+    return app;
 }
 
 function isResource(f) {
-	var res = /^.*\.(xml|css|png|jpg|jpeg|expected|js|json)$/mig;
+	var res = /^.*\.(css|png|jpg|jpeg|expected|js|json)$/mig;
 	return res.test(f);
+}
+
+function isXml(f) {
+    var xml = /^.*\.(xml)$/mig;
+	return xml.test(f);
+}
+
+function mapPaths(content, ownerApplication) {
+    var processed = content;
+    processed = processed.replace(/(\.mainModule\s*=\s*"(\.\/)?)/g, "$1" + ownerApplication + "/");
+
+    // var basePath = "pages/";
+    processed = processed.replace(/(var\s*basePath\s*=\s*"(\.\/)?)/g, "$1" + ownerApplication + "/");
+
+    // moduleName: "details-page"
+    processed = processed.replace(/(moduleName\s*:\s*"(.\/)?)/g, "$1" + ownerApplication + "/");
+
+    // frames.topmost().navigate("news")
+    processed = processed.replace(/(\.topmost\(\).navigate\(\s*"(\.\/)?)/g, "$1" + ownerApplication + "/");
+
+    // navigateToModule("ui/page/test-page-module")
+    processed = processed.replace(/(navigateToModule\(\s*"(\.\/)?)/g, "$1" + ownerApplication + "/");
+
+    // xmlns:customControls="xml-declaration/mymodule"
+    processed = processed.replace(/(xmlns:[^=]+=\s*"(\.\/)?)/g, "$1" + ownerApplication + "/");
+
+    // ~/cuteness.io/res/someimage.png
+    processed = processed.replace(/(~\/)/g, "$1" + ownerApplication + "/");
+
+    // cssFile = "app.css"
+    processed = processed.replace(/(cssFile\s*=\s*"(.\/)?)/g, "$1" + ownerApplication + "/");
+
+    return processed;
 }
 
 console.log("Starting up watcher...");
@@ -30,6 +65,8 @@ fse.watch('NativeScript', { persistent: true, recursive: true }, function(event,
 			stats.source.type = "res";
 		} else if (isTs(file)) {
 			stats.source.type = "ts";
+		} else if (isXml(file)) {
+			stats.source.type = "xml";
 		} else {
 			console.log(" ×     " + file);
 			return;
@@ -70,20 +107,20 @@ fse.watch('NativeScript', { persistent: true, recursive: true }, function(event,
 		
 		stats.destination.app = path.resolve(
 			"TNSApp/"
-			+ (isApp(file) ? "app/" + base.substr(5) : "node_modules/tns-core-modules/" + base)
+			+ (appName(file) ? "app/" + base.substr(5) : "node_modules/tns-core-modules/" + base)
 			+ name
 			+ (platform ? "." + platform : "")
 			+ (extension ? "." + extension : ""));
 			
 		stats.destination.ios = path.resolve(
 			"TNSApp/platforms/ios/TNSApp/app/"
-			+ (isApp(file) ? base.substr(5) : "tns_modules/" + base)
+			+ (appName(file) ? base.substr(5) : "tns_modules/" + base)
 			+ name
 			+ (extension ? "." + extension : ""));
 	
 		stats.destination.android = path.resolve(
 			"TNSApp/platforms/android/assets/app/"
-			+ (isApp(file) ? base.substr(5) : "tns_modules/" + base)
+			+ (appName(file) ? base.substr(5) : "tns_modules/" + base)
 			+ name
 			+ (extension ? "." + extension : ""));
 		
@@ -92,28 +129,32 @@ fse.watch('NativeScript', { persistent: true, recursive: true }, function(event,
 		
 		switch(stats.source.type) {
 			case "ts":
+			case "xml":
 				var source = fse.readFileSync(stats.source.file, { encoding: "utf8" });
-				var result = ts.transpile(source, { module: ts.ModuleKind.CommonJS });
-				console.log("   ☼   Transpile");		
-				
+				if (stats.source.type === "ts") {
+					source = ts.transpile(source, { module: ts.ModuleKind.CommonJS });
+					console.log("   ☼   Transpile");
+				}
+				source = mapPaths(source, appName(file));
+				console.log("   ☼   Map Paths");
 				console.log("   ├→○ app: " + stats.destination.app);
 				mkdirp.sync(path.dirname(stats.destination.app));
-				fse.writeFileSync(stats.destination.app, result, flags, function(err) {
+				fse.writeFileSync(stats.destination.app, source, flags, function(err) {
 					console.log(err);
 				});
-				
+
 				console.log("   ├→○ ios: " + stats.destination.ios);
 				mkdirp.sync(path.dirname(stats.destination.ios));
-				fse.writeFileSync(stats.destination.ios, result, flags, function(err) {
+				fse.writeFileSync(stats.destination.ios, source, flags, function(err) {
 					console.log(err);
 				});
-				
+
 				console.log("   └→○ android: " + stats.destination.android);
 				mkdirp.sync(path.dirname(stats.destination.android));
-				fse.writeFileSync(stats.destination.android, result, flags, function(err) {
+				fse.writeFileSync(stats.destination.android, source, flags, function(err) {
 					console.log(err);
 				});
-				
+
 				break;
 			case "res":
 				// console.log("   ☼   Copy");
