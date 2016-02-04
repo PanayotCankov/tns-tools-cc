@@ -135,8 +135,11 @@ fse.watch('NativeScript', { persistent: true, recursive: true }, function(event,
 					source = ts.transpile(source, { module: ts.ModuleKind.CommonJS });
 					console.log("   ☼   Transpile");
 				}
-				source = mapPaths(source, appName(file));
-				console.log("   ☼   Map Paths");
+				var fileAppName = appName(file);
+				if (fileAppName) {
+					source = mapPaths(source, fileAppName);
+					console.log("   ☼   Map Paths");
+				}
 				console.log("   ├→○ app: " + stats.destination.app);
 				mkdirp.sync(path.dirname(stats.destination.app));
 				fse.writeFileSync(stats.destination.app, source, flags, function(err) {
